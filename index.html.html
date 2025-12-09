@@ -1,0 +1,1630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bye Bad Habits - Track Your Savings</title>
+    <style>
+        /* Color Scheme Variables */
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --success: var(--success);
+            --danger: var(--danger);
+            --warning: #f59e0b;
+            --bg-main: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --bg-card: #ffffff;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --border: #e5e7eb;
+        }
+        
+        [data-theme="dark"] {
+            --primary: #818cf8;
+            --secondary: #a78bfa;
+            --success: #34d399;
+            --danger: #f87171;
+            --warning: #fbbf24;
+            --bg-main: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            --bg-card: #1e293b;
+            --text-primary: #f9fafb;
+            --text-secondary: #9ca3af;
+            --border: #374151;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--bg-main);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .total-savings {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .total-savings h2 {
+            color: var(--primary);
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .total-amount {
+            font-size: 4em;
+            font-weight: bold;
+            color: var(--success);
+            margin: 10px 0;
+        }
+
+        .habits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .habit-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+         background: var(--bg-card); color: var(--text-primary); transition: all 0.3s ease;}
+
+        .habit-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .habit-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .habit-name {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .habit-icon {
+            font-size: 2em;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .savings-display {
+            background: #f0fdf4;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            border: 2px solid var(--success);
+        }
+
+        .savings-display .label {
+            font-size: 0.9em;
+            color: #059669;
+            margin-bottom: 5px;
+        }
+
+        .savings-display .amount {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: var(--success);
+        }
+
+        .time-display {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            font-size: 0.85em;
+            color: #666;
+        }
+
+        .time-display div {
+            flex: 1;
+            background: #f9fafb;
+            padding: 8px;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .time-display strong {
+            display: block;
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        .reset-button {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: background 0.3s;
+        }
+
+        .reset-button:hover {
+            background: #dc2626;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            opacity: 0.8;
+        }
+
+        .investment-card {
+            border-radius: 12px;
+            padding: 20px;
+            color: white;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .total-amount {
+                font-size: 3em;
+            }
+
+            .habits-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @keyframes wave {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(20deg); }
+            75% { transform: rotate(-20deg); }
+        }
+        
+        .wave-emoji {
+            display: inline-block;
+            animation: wave 1.5s ease-in-out infinite;
+            font-size: 2.5em;
+        }
+        
+        .quick-add-btn {
+            padding: 10px 12px;
+            border: 2px solid var(--primary);
+            background: var(--bg-card);
+            color: var(--primary);
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+        
+        .quick-add-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Dark Mode Toggle -->
+        <button onclick="toggleDarkMode()" style="position: fixed; top: 20px; right: 20px; background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.3); color: white; padding: 10px 15px; border-radius: 20px; cursor: pointer; font-size: 1.2em; backdrop-filter: blur(10px); z-index: 1000;">
+            <span id="theme-icon">🌙</span>
+        </button>
+        
+        <div class="header">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 15px;">
+                <span class="wave-emoji">👋</span>
+                <h1>Bye Bad Habits</h1>
+            </div>
+            <p>Track your savings, celebrate your progress</p>
+            <div style="margin-top: 15px;">
+                <label style="font-size: 0.9em; margin-right: 10px;">Currency:</label>
+                <select id="currency-selector" style="padding: 8px 15px; border-radius: 8px; border: 2px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.2); color: white; font-size: 1em; cursor: pointer;">
+                    <option value="EUR" style="color: #333;">€ EUR</option>
+                    <option value="USD" style="color: #333;">$ USD</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="total-savings">
+            <h2>Total Money Saved</h2>
+            <div class="total-amount" id="totalSavings">€0.00</div>
+            <p style="color: var(--text-secondary); margin-top: 10px;">Keep going strong! 💪</p>
+            
+            <!-- Milestone Progress -->
+            <div style="margin-top: 20px; padding: 15px; background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1)); border-radius: 12px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <span style="font-weight: 600; color: var(--primary);">Next Milestone: €1,000</span>
+                    <span id="milestone-percent" style="font-weight: 600; color: var(--primary);">0%</span>
+                </div>
+                <div style="background: rgba(255,255,255,0.3); height: 8px; border-radius: 10px; overflow: hidden;">
+                    <div id="milestone-bar" style="background: linear-gradient(90deg, var(--primary), var(--secondary)); height: 100%; width: 0%; transition: width 0.5s ease;"></div>
+                </div>
+            </div>
+            
+            <!-- Quick Stats Grid -->
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px;">
+                <div style="text-align: center; padding: 12px; background: rgba(102, 126, 234, 0.1); border-radius: 10px;">
+                    <div style="font-size: 1.5em; font-weight: bold; color: var(--primary);" id="active-habits">0</div>
+                    <div style="font-size: 0.8em; color: var(--text-secondary);">Active Habits</div>
+                </div>
+                <div style="text-align: center; padding: 12px; background: rgba(16, 185, 129, 0.1); border-radius: 10px;">
+                    <div style="font-size: 1.5em; font-weight: bold; color: var(--success);" id="daily-savings">€0</div>
+                    <div style="font-size: 0.8em; color: var(--text-secondary);">Daily Savings</div>
+                </div>
+                <div style="text-align: center; padding: 12px; background: rgba(245, 158, 11, 0.1); border-radius: 10px;">
+                    <div style="font-size: 1.5em; font-weight: bold; color: var(--warning);" id="monthly-savings">€0</div>
+                    <div style="font-size: 0.8em; color: var(--text-secondary);">Monthly Savings</div>
+                </div>
+                <div style="text-align: center; padding: 12px; background: rgba(239, 68, 68, 0.1); border-radius: 10px;">
+                    <div style="font-size: 1.5em; font-weight: bold; color: var(--danger);" id="yearly-savings">€0</div>
+                    <div style="font-size: 0.8em; color: var(--text-secondary);">Yearly Savings</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Add Common Habits -->
+        <div class="total-savings" style="padding: 25px;">
+            <h3 style="color: var(--primary); margin-bottom: 15px;">⚡ Quick Add Common Habits</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 15px;">
+                <button onclick="quickAddHabit('Dining out', '🍽️')" class="quick-add-btn">🍽️ Dining out</button>
+                <button onclick="quickAddHabit('Lottery tickets', '🎫')" class="quick-add-btn">🎫 Lottery tickets</button>
+                <button onclick="quickAddHabit('Unused subscriptions', '📱')" class="quick-add-btn">📱 Unused subscriptions</button>
+                <button onclick="quickAddHabit('Starbucks', '☕')" class="quick-add-btn">☕ Starbucks</button>
+                <button onclick="quickAddHabit('Bottled water', '💧')" class="quick-add-btn">💧 Bottled water</button>
+                <button onclick="quickAddHabit('Alcohol', '🍺')" class="quick-add-btn">🍺 Alcohol</button>
+                <button onclick="quickAddHabit('Drugs', '💊')" class="quick-add-btn">💊 Drugs</button>
+                <button onclick="quickAddHabit('Gambling', '🎰')" class="quick-add-btn">🎰 Gambling</button>
+                <button onclick="quickAddHabit('Impulsive spending', '🛍️')" class="quick-add-btn">🛍️ Impulsive spending</button>
+            </div>
+            <button id="add-habit-btn" onclick="addCustomHabit()" style="background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); color: white; border: none; padding: 12px 25px; border-radius: 12px; font-size: 1em; cursor: pointer; width: 100%; font-weight: 600; transition: transform 0.2s;">
+                ➕ Add Custom Habit
+            </button>
+        </div>
+
+        <div class="habits-grid">
+            <div class="habit-card">
+                <div class="habit-header">
+                    <span class="habit-name">Smoking</span>
+                    <span class="habit-icon">🚭</span>
+                </div>
+                <div class="input-group">
+                    <label>Monthly cost (<span class="currency-symbol"></span>)</label>
+                    <input type="number" id="smoking-cost" placeholder="e.g., 200" min="0" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label>Quit date</label>
+                    <input type="datetime-local" id="smoking-date">
+                </div>
+                <div class="savings-display">
+                    <div class="label">Money Saved</div>
+                    <div class="amount" id="smoking-savings">€0.00</div>
+                    <div class="time-display">
+                        <div><strong id="smoking-days">0</strong>Days</div>
+                        <div><strong id="smoking-hours">0</strong>Hours</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="habit-card">
+                <div class="habit-header">
+                    <span class="habit-name">Ordering Food</span>
+                    <span class="habit-icon">🍔</span>
+                </div>
+                <div class="input-group">
+                    <label>Monthly cost (<span class="currency-symbol"></span>)</label>
+                    <input type="number" id="food-cost" placeholder="e.g., 150" min="0" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label>Quit date</label>
+                    <input type="datetime-local" id="food-date">
+                </div>
+                <div class="savings-display">
+                    <div class="label">Money Saved</div>
+                    <div class="amount" id="food-savings">€0.00</div>
+                    <div class="time-display">
+                        <div><strong id="food-days">0</strong>Days</div>
+                        <div><strong id="food-hours">0</strong>Hours</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="habit-card">
+                <div class="habit-header">
+                    <span class="habit-name">Chocolate/Candy</span>
+                    <span class="habit-icon">🍫</span>
+                </div>
+                <div class="input-group">
+                    <label>Monthly cost (<span class="currency-symbol"></span>)</label>
+                    <input type="number" id="candy-cost" placeholder="e.g., 50" min="0" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label>Quit date</label>
+                    <input type="datetime-local" id="candy-date">
+                </div>
+                <div class="savings-display">
+                    <div class="label">Money Saved</div>
+                    <div class="amount" id="candy-savings">€0.00</div>
+                    <div class="time-display">
+                        <div><strong id="candy-days">0</strong>Days</div>
+                        <div><strong id="candy-hours">0</strong>Hours</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="habit-card">
+                <div class="habit-header">
+                    <span class="habit-name">Iced Coffee</span>
+                    <span class="habit-icon">☕</span>
+                </div>
+                <div class="input-group">
+                    <label>Monthly cost (<span class="currency-symbol"></span>)</label>
+                    <input type="number" id="coffee-cost" placeholder="e.g., 80" min="0" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label>Quit date</label>
+                    <input type="datetime-local" id="coffee-date">
+                </div>
+                <div class="savings-display">
+                    <div class="label">Money Saved</div>
+                    <div class="amount" id="coffee-savings">€0.00</div>
+                    <div class="time-display">
+                        <div><strong id="coffee-days">0</strong>Days</div>
+                        <div><strong id="coffee-hours">0</strong>Hours</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Custom Habits Container -->
+        <div id="custom-habits-container" class="habits-grid" style="margin-bottom: 20px;"></div>
+
+        <button class="reset-button" onclick="resetAllData()">Reset All Data</button>
+
+        <!-- Investment Calculator Section -->
+        <div class="investment-section" style="margin-top: 40px;">
+            <div class="total-savings">
+                <h2 style="margin-bottom: 20px;">💰 What If You Invested That Money Instead?</h2>
+                <p style="color: #666; margin-bottom: 20px;">See what your bad habit spending would be worth if you'd invested it!</p>
+                
+                <div style="display: grid; gap: 15px; margin-bottom: 20px;">
+                    <div class="input-group" style="text-align: left;">
+                        <label style="font-weight: bold; color: #333;">How many years were you doing these habits?</label>
+                        <input type="number" id="past-years" placeholder="e.g., 5" min="0" step="0.5" max="6"
+                               style="padding: 12px; font-size: 1.1em; border: 2px solid #e5e7eb; border-radius: 8px; width: 100%;">
+                    </div>
+                    
+                    <div class="input-group" style="text-align: left;">
+                        <label style="font-weight: bold; color: #333;">Total monthly spending on bad habits (${getCurrencySymbol()})</label>
+                        <input type="number" id="past-monthly" placeholder="e.g., 400" min="0" step="1" 
+                               style="padding: 12px; font-size: 1.1em; border: 2px solid #e5e7eb; border-radius: 8px; width: 100%;">
+                        <small style="color: #666; display: block; margin-top: 5px;">Add up all your monthly costs from above (max 6 years)</small>
+                    </div>
+                </div>
+
+                <div id="investment-results" style="display: none;">
+                    <div style="background: #fef2f2; border: 2px solid var(--danger); border-radius: 10px; padding: 20px; margin-bottom: 20px;">
+                        <h3 style="color: #991b1b; margin-bottom: 10px;">💸 Money Wasted</h3>
+                        <div style="font-size: 2.5em; font-weight: bold; color: #dc2626;" id="total-wasted">€0</div>
+                        <p style="color: #666; margin-top: 5px;">This is what you spent on bad habits</p>
+                    </div>
+
+                    <div class="investments-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                        <div class="investment-card" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                            <div style="font-size: 1.8em; margin-bottom: 5px;">🏠</div>
+                            <div style="font-size: 0.9em; opacity: 0.9; margin-bottom: 5px;">Real Estate (Real DCA)</div>
+                            <div style="font-size: 2em; font-weight: bold;" id="real-estate-value">€0</div>
+                        </div>
+
+                        <div class="investment-card" style="background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);">
+                            <div style="font-size: 1.8em; margin-bottom: 5px;">🪙</div>
+                            <div style="font-size: 0.9em; opacity: 0.9; margin-bottom: 5px;">Gold (Real DCA)</div>
+                            <div style="font-size: 2em; font-weight: bold;" id="gold-value">€0</div>
+                        </div>
+
+                        <div class="investment-card" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);">
+                            <div style="font-size: 1.8em; margin-bottom: 5px;">📈</div>
+                            <div style="font-size: 0.9em; opacity: 0.9; margin-bottom: 5px;">S&P 500 (Real DCA)</div>
+                            <div style="font-size: 2em; font-weight: bold;" id="sp500-value">€0</div>
+                        </div>
+
+                        <div class="investment-card" style="background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);">
+                            <div style="font-size: 1.8em; margin-bottom: 5px;">₿</div>
+                            <div style="font-size: 0.9em; opacity: 0.9; margin-bottom: 5px;">Bitcoin (Real DCA)</div>
+                            <div style="font-size: 2em; font-weight: bold;" id="bitcoin-value">€0</div>
+                        </div>
+                    </div>
+
+                    <!-- Bitcoin DCA Chart -->
+                    <div id="btc-chart-section" style="background: white; border-radius: 12px; padding: 25px; margin-top: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                        <h3 style="color: #333; margin-bottom: 15px;">📊 Your Bitcoin DCA Journey (Weekly)</h3>
+                        <p style="color: #666; margin-bottom: 20px; font-size: 0.9em;">
+                            Tap or click anywhere on the chart to see exact values
+                        </p>
+                        <div id="chart-container" style="background: #f9fafb; border-radius: 8px; padding: 15px; overflow-x: auto; -webkit-overflow-scrolling: touch; position: relative; touch-action: pan-x;">
+                            <div id="chart-tooltip" style="position: absolute; display: none; background: rgba(0,0,0,0.9); color: white; padding: 10px 15px; border-radius: 8px; font-size: 13px; pointer-events: none; z-index: 1000; white-space: nowrap; box-shadow: 0 4px 6px rgba(0,0,0,0.3);"></div>
+                            <svg id="btcChart" width="1000" height="350" style="display: block;"></svg>
+                        </div>
+                        <div style="margin-top: 20px; padding: 15px; background: #f9fafb; border-radius: 8px;">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 15px; text-align: center;">
+                                <div>
+                                    <div style="font-size: 0.85em; color: #666;">Total Invested</div>
+                                    <div style="font-size: 1.3em; font-weight: bold; color: #f97316;" id="btc-total-invested">€0</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 0.85em; color: #666;">Final Value</div>
+                                    <div style="font-size: 1.3em; font-weight: bold; color: var(--success);" id="btc-final-value">€0</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 0.85em; color: #666;">Total Gain</div>
+                                    <div style="font-size: 1.3em; font-weight: bold; color: var(--success);" id="btc-total-gain">€0</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 0.85em; color: #666;">ROI</div>
+                                    <div style="font-size: 1.3em; font-weight: bold; color: var(--success);" id="btc-roi">0%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background: #f0fdf4; border: 2px solid var(--success); border-radius: 10px; padding: 20px; margin-top: 20px;">
+                        <h3 style="color: #059669; margin-bottom: 10px;">🎯 Your New Future</h3>
+                        <p style="color: #666; line-height: 1.6;">
+                            The money you're saving NOW can still be invested! Keep going strong and watch your wealth grow. 
+                            Every day without these habits is money in your pocket. 💪
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Every moment without a bad habit is a win! 🎉</p>
+        </div>
+    </div>
+
+    <script>
+        const habits = ['smoking', 'food', 'candy', 'coffee'];
+        let customHabits = JSON.parse(localStorage.getItem('customHabits') || '[]');
+        
+        // Emoji mapping for common habits
+        const habitEmojis = {
+            'beer': '🍺', 'alcohol': '🍺', 'wine': '🍷', 'liquor': '🥃', 'drinks': '🍹',
+            'soda': '🥤', 'coffee': '☕', 'energy drinks': '⚡',
+            'gambling': '🎰', 'lottery': '🎫', 'betting': '🎲',
+            'gaming': '🎮', 'video games': '🎮',
+            'shopping': '🛍️', 'clothes': '👔', 'shoes': '👟',
+            'takeout': '🍔', 'fast food': '🍟', 'pizza': '🍕',
+            'snacks': '🍿', 'candy': '🍬', 'chocolate': '🍫', 'ice cream': '🍨',
+            'uber': '🚗', 'taxi': '🚕',
+            'subscriptions': '📱', 'streaming': '📺', 'netflix': '🎬',
+            'gym': '🏋️', 'smoking': '🚬', 'cigarettes': '🚬', 'vaping': '💨',
+            'default': '🎯'
+        };
+        
+        function getEmojiForHabit(habitName) {
+            const name = habitName.toLowerCase().trim();
+            if (habitEmojis[name]) return habitEmojis[name];
+            for (const [key, emoji] of Object.entries(habitEmojis)) {
+                if (name.includes(key) || key.includes(name)) return emoji;
+            }
+            return habitEmojis['default'];
+        }
+        
+        function createCustomHabitCard(habit) {
+            const emoji = getEmojiForHabit(habit.name);
+            const card = document.createElement('div');
+            card.className = 'habit-card';
+            card.id = `custom-habit-${habit.id}`;
+            
+            card.innerHTML = `
+                <div class="habit-header">
+                    <span class="habit-name">${habit.name}</span>
+                    <span class="habit-icon">${emoji}</span>
+                </div>
+                <button onclick="removeCustomHabit('${habit.id}')" style="background: var(--danger); color: white; border: none; padding: 5px 10px; border-radius: 5px; font-size: 0.85em; cursor: pointer; margin-bottom: 15px;">Remove</button>
+                <div class="input-group">
+                    <label>Monthly cost (${getCurrencySymbol()})</label>
+                    <input type="number" id="custom-${habit.id}-cost" placeholder="e.g., 100" min="0" step="0.01" value="${habit.cost || ''}">
+                </div>
+                <div class="input-group">
+                    <label>Quit date</label>
+                    <input type="datetime-local" id="custom-${habit.id}-date" value="${habit.date || ''}">
+                </div>
+                <div class="savings-display">
+                    <div class="label">Money Saved</div>
+                    <div class="amount" id="custom-${habit.id}-savings">${getCurrencySymbol()}0.00</div>
+                    <div class="time-display">
+                        <div><strong id="custom-${habit.id}-days">0</strong>Days</div>
+                        <div><strong id="custom-${habit.id}-hours">0</strong>Hours</div>
+                    </div>
+                </div>
+            `;
+            
+            return card;
+        }
+        
+        // Dark mode toggle
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme');
+            const newTheme = current === 'dark' ? '' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            document.getElementById('theme-icon').textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        }
+        
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            document.getElementById('theme-icon').textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+        }
+        
+        // Quick add habit
+        function quickAddHabit(name, icon) {
+            const existing = customHabits.find(h => h.name === name);
+            if (existing) {
+                alert(name + ' is already added!');
+                return;
+            }
+            
+            const habit = {
+                id: Date.now().toString(),
+                name: name,
+                icon: icon,
+                cost: '',
+                date: ''
+            };
+            
+            customHabits.push(habit);
+            localStorage.setItem('customHabits', JSON.stringify(customHabits));
+            renderCustomHabits();
+        }
+        
+        function renderCustomHabits() {
+            const container = document.getElementById('custom-habits-container');
+            container.innerHTML = '';
+            
+            customHabits.forEach(habit => {
+                container.appendChild(createCustomHabitCard(habit));
+                
+                const costInput = document.getElementById(`custom-${habit.id}-cost`);
+                const dateInput = document.getElementById(`custom-${habit.id}-date`);
+                
+                if (costInput) {
+                    costInput.addEventListener('input', function(e) {
+                        habit.cost = e.target.value;
+                        localStorage.setItem('customHabits', JSON.stringify(customHabits));
+                        calculateSavings();
+                    });
+                }
+                
+                if (dateInput) {
+                    dateInput.addEventListener('change', function(e) {
+                        habit.date = e.target.value;
+                        localStorage.setItem('customHabits', JSON.stringify(customHabits));
+                        calculateSavings();
+                    });
+                }
+            });
+            
+            calculateSavings();
+        }
+        
+        window.addCustomHabit = function() {
+            const modal = document.createElement('div');
+            modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 20px;';
+            
+            const modalContent = document.createElement('div');
+            modalContent.style.cssText = 'background: white; border-radius: 20px; padding: 30px; max-width: 400px; width: 100%; box-shadow: 0 10px 40px rgba(0,0,0,0.3);';
+            
+            modalContent.innerHTML = `
+                <h3 style="margin: 0 0 10px 0; color: #333; font-size: 1.4em;">Add Custom Habit</h3>
+                <p style="margin: 0 0 20px 0; color: #666; font-size: 0.95em;">Enter the name of your bad habit (e.g., "Beer", "Gym", "Uber")</p>
+                <input type="text" id="habit-name-input" placeholder="Habit name..." style="width: 100%; padding: 15px; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 1.1em; margin-bottom: 20px; box-sizing: border-box;">
+                <div style="display: flex; gap: 10px;">
+                    <button id="cancel-habit-btn" style="flex: 1; padding: 15px; background: #e5e7eb; color: #666; border: none; border-radius: 10px; font-size: 1em; cursor: pointer; font-weight: 600;">Cancel</button>
+                    <button id="add-habit-confirm-btn" style="flex: 1; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 10px; font-size: 1em; cursor: pointer; font-weight: 600;">Add Habit</button>
+                </div>
+            `;
+            
+            modal.appendChild(modalContent);
+            document.body.appendChild(modal);
+            
+            const input = document.getElementById('habit-name-input');
+            const confirmBtn = document.getElementById('add-habit-confirm-btn');
+            const cancelBtn = document.getElementById('cancel-habit-btn');
+            
+            setTimeout(() => input.focus(), 100);
+            
+            function closeModal() {
+                document.body.removeChild(modal);
+            }
+            
+            function addHabit() {
+                const name = input.value.trim();
+                if (!name) {
+                    input.style.borderColor = 'var(--danger)';
+                    input.placeholder = 'Please enter a habit name';
+                    return;
+                }
+                
+                const habit = {
+                    id: Date.now().toString(),
+                    name: name,
+                    cost: '',
+                    date: ''
+                };
+                
+                customHabits.push(habit);
+                localStorage.setItem('customHabits', JSON.stringify(customHabits));
+                renderCustomHabits();
+                closeModal();
+            }
+            
+            confirmBtn.addEventListener('click', addHabit);
+            cancelBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) closeModal();
+            });
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') addHabit();
+            });
+        }
+        
+        window.removeCustomHabit = function(id) {
+            if (!confirm('Remove this habit?')) return;
+            customHabits = customHabits.filter(h => h.id !== id);
+            localStorage.setItem('customHabits', JSON.stringify(customHabits));
+            renderCustomHabits();
+            calculateSavings();
+        }
+        
+        function calculateCustomHabitSavings(habit) {
+            const cost = parseFloat(habit.cost) || 0;
+            const dateStr = habit.date;
+            
+            const savingsEl = document.getElementById(`custom-${habit.id}-savings`);
+            const daysEl = document.getElementById(`custom-${habit.id}-days`);
+            const hoursEl = document.getElementById(`custom-${habit.id}-hours`);
+            
+            if (!savingsEl || !daysEl || !hoursEl) return 0;
+            
+            if (!dateStr || cost === 0) {
+                savingsEl.textContent = getCurrencySymbol() + '0.00';
+                daysEl.textContent = '0';
+                hoursEl.textContent = '0';
+                return 0;
+            }
+
+            const quitDate = new Date(dateStr);
+            const now = new Date();
+            const diffMs = now - quitDate;
+            
+            if (diffMs < 0) {
+                savingsEl.textContent = getCurrencySymbol() + '0.00';
+                daysEl.textContent = '0';
+                hoursEl.textContent = '0';
+                return 0;
+            }
+
+            const diffDays = diffMs / (1000 * 60 * 60 * 24);
+            const diffHours = (diffMs / (1000 * 60 * 60)) % 24;
+            const dailyCost = cost / 30;
+            const savings = dailyCost * diffDays;
+
+            savingsEl.textContent = getCurrencySymbol() + savings.toFixed(2);
+            daysEl.textContent = Math.floor(diffDays);
+            hoursEl.textContent = Math.floor(diffHours);
+
+            return savings;
+        }
+        
+        // Currency management with real conversion
+        let currentCurrency = localStorage.getItem('currency') || 'EUR';
+        const EUR_TO_USD = 1.10;
+        
+        function getCurrencySymbol() {
+            return currentCurrency === 'EUR' ? '€' : '$';
+        }
+        
+        function convertToDisplayCurrency(euroAmount) {
+            return currentCurrency === 'USD' ? euroAmount * EUR_TO_USD : euroAmount;
+        }
+        
+        function formatCurrency(amount) {
+            const symbol = getCurrencySymbol();
+            const displayAmount = convertToDisplayCurrency(parseFloat(amount) || 0);
+            return `${symbol}${displayAmount.toFixed(2)}`;
+        }
+        
+        function initCurrency() {
+            document.getElementById('currency-selector').value = currentCurrency;
+            document.getElementById('currency-selector').addEventListener('change', function(e) {
+                currentCurrency = e.target.value;
+                localStorage.setItem('currency', currentCurrency);
+                // Refresh all displays
+                calculateSavings();
+                updateInvestmentCalculations();
+            });
+        }
+
+        // Load saved data
+        function loadData() {
+            habits.forEach(habit => {
+                const cost = localStorage.getItem(`${habit}-cost`);
+                const date = localStorage.getItem(`${habit}-date`);
+                
+                if (cost) document.getElementById(`${habit}-cost`).value = cost;
+                if (date) document.getElementById(`${habit}-date`).value = date;
+            });
+        }
+
+        // Save data
+        function saveData(habit, field, value) {
+            localStorage.setItem(`${habit}-${field}`, value);
+            calculateSavings();
+        }
+
+        // Calculate savings for a habit
+        function calculateHabitSavings(habit) {
+            const cost = parseFloat(document.getElementById(`${habit}-cost`).value) || 0;
+            const dateStr = document.getElementById(`${habit}-date`).value;
+            
+            if (!dateStr || cost === 0) {
+                document.getElementById(`${habit}-savings`).textContent = '€0.00';
+                document.getElementById(`${habit}-days`).textContent = '0';
+                document.getElementById(`${habit}-hours`).textContent = '0';
+                return 0;
+            }
+
+            const quitDate = new Date(dateStr);
+            const now = new Date();
+            const diffMs = now - quitDate;
+            
+            if (diffMs < 0) {
+                document.getElementById(`${habit}-savings`).textContent = '€0.00';
+                document.getElementById(`${habit}-days`).textContent = '0';
+                document.getElementById(`${habit}-hours`).textContent = '0';
+                return 0;
+            }
+
+            const diffDays = diffMs / (1000 * 60 * 60 * 24);
+            const diffHours = (diffMs / (1000 * 60 * 60)) % 24;
+            
+            const dailyCost = cost / 30;
+            const savings = dailyCost * diffDays;
+
+            document.getElementById(`${habit}-savings`).textContent = formatCurrency(savings.toFixed(2));
+            document.getElementById(`${habit}-days`).textContent = Math.floor(diffDays);
+            document.getElementById(`${habit}-hours`).textContent = Math.floor(diffHours);
+
+            return savings;
+        }
+
+        // Calculate total savings
+        function calculateSavings() {
+            let total = 0;
+            let totalDays = 0;
+            let activeCount = 0;
+            let dailyTotal = 0;
+            
+            habits.forEach(habit => {
+                const savings = calculateHabitSavings(habit);
+                total += savings;
+                
+                const dateStr = localStorage.getItem(`${habit}-date`);
+                const cost = parseFloat(localStorage.getItem(`${habit}-cost`)) || 0;
+                if (dateStr && cost > 0) {
+                    activeCount++;
+                    const quitDate = new Date(dateStr);
+                    const now = new Date();
+                    const days = Math.floor((now - quitDate) / (1000 * 60 * 60 * 24));
+                    if (days > 0) totalDays = Math.max(totalDays, days);
+                    dailyTotal += cost / 30;
+                }
+            });
+            
+            customHabits.forEach(habit => {
+                const savings = calculateCustomHabitSavings(habit);
+                total += savings;
+                
+                if (habit.date && habit.cost > 0) {
+                    activeCount++;
+                    const quitDate = new Date(habit.date);
+                    const now = new Date();
+                    const days = Math.floor((now - quitDate) / (1000 * 60 * 60 * 24));
+                    if (days > 0) totalDays = Math.max(totalDays, days);
+                    dailyTotal += parseFloat(habit.cost) / 30;
+                }
+            });
+            
+            document.getElementById('totalSavings').textContent = formatCurrency(total.toFixed(2));
+            
+            // Update stats
+            const monthlySavings = dailyTotal * 30;
+            const yearlySavings = dailyTotal * 365;
+            
+            document.getElementById('active-habits').textContent = activeCount;
+            document.getElementById('daily-savings').textContent = formatCurrency(dailyTotal.toFixed(2));
+            document.getElementById('monthly-savings').textContent = formatCurrency(monthlySavings.toFixed(2));
+            document.getElementById('yearly-savings').textContent = formatCurrency(yearlySavings.toFixed(2));
+            
+            // Update milestone progress
+            const milestones = [100, 500, 1000, 2500, 5000, 10000];
+            let nextMilestone = milestones.find(m => m > total) || 10000;
+            let prevMilestone = milestones.reverse().find(m => m <= total) || 0;
+            milestones.reverse();
+            
+            const progress = prevMilestone === 0 ? (total / nextMilestone) * 100 : ((total - prevMilestone) / (nextMilestone - prevMilestone)) * 100;
+            document.getElementById('milestone-bar').style.width = Math.min(progress, 100) + '%';
+            document.getElementById('milestone-percent').textContent = Math.floor(progress) + '%';
+            
+            // Update next milestone text
+            const milestoneEl = document.querySelector('[style*="Next Milestone"]');
+            if (milestoneEl) {
+                milestoneEl.textContent = 'Next Milestone: ' + formatCurrency(nextMilestone);
+            }
+        }
+
+        // Reset all data
+        function resetAllData() {
+            if (confirm('Are you sure you want to reset all data? This cannot be undone.')) {
+                habits.forEach(habit => {
+                    localStorage.removeItem(`${habit}-cost`);
+                    localStorage.removeItem(`${habit}-date`);
+                    document.getElementById(`${habit}-cost`).value = '';
+                    document.getElementById(`${habit}-date`).value = '';
+                });
+                customHabits = [];
+                localStorage.removeItem('customHabits');
+                renderCustomHabits();
+                localStorage.removeItem('past-years');
+                localStorage.removeItem('past-monthly');
+                document.getElementById('past-years').value = '';
+                document.getElementById('past-monthly').value = '';
+                calculateSavings();
+                updateInvestmentCalculations();
+            }
+        }
+
+        // Set up event listeners
+        habits.forEach(habit => {
+            document.getElementById(`${habit}-cost`).addEventListener('input', (e) => {
+                saveData(habit, 'cost', e.target.value);
+            });
+            
+            document.getElementById(`${habit}-date`).addEventListener('change', (e) => {
+                saveData(habit, 'date', e.target.value);
+            });
+        });
+
+        // Initialize
+        loadData();
+        calculateSavings();
+        setInterval(calculateSavings, 1000);
+
+        // Bitcoin Weekly Price Data (sampled weeks from 2019-2024)
+        const btcWeeklyData = generateWeeklyBitcoinData();
+        
+        function generateWeeklyBitcoinData() {
+            // Monthly data as baseline
+            const monthlyData = {
+                '2019': [3600, 3800, 4000, 5100, 7800, 9000, 10500, 10100, 9800, 8500, 7500, 7200],
+                '2020': [9300, 9600, 6400, 7000, 9000, 9500, 9200, 11500, 10700, 13200, 18000, 28000],
+                '2021': [33000, 45000, 55000, 58000, 57000, 35000, 33000, 45000, 43000, 60000, 57000, 47000],
+                '2022': [38000, 39000, 42000, 40000, 30000, 20000, 21000, 20000, 19000, 19500, 17000, 16500],
+                '2023': [17000, 23000, 28000, 28500, 27000, 30000, 29500, 29000, 26500, 34000, 37000, 42000],
+                '2024': [43000, 51000, 65000, 67000, 64000, 60000, 65000, 60000, 62000, 68000, 90000, 95000]
+            };
+            
+            const weeklyData = {};
+            
+            // Generate weekly data by interpolating monthly values
+            for (const [year, months] of Object.entries(monthlyData)) {
+                weeklyData[year] = [];
+                for (let m = 0; m < 12; m++) {
+                    const currentPrice = months[m];
+                    const nextPrice = m < 11 ? months[m + 1] : currentPrice;
+                    
+                    // Generate 4 weeks per month with slight variations
+                    for (let w = 0; w < 4; w++) {
+                        const progress = w / 4;
+                        const interpolated = currentPrice + (nextPrice - currentPrice) * progress;
+                        const variation = (Math.random() - 0.5) * 0.1 * interpolated; // +/- 5% variation
+                        weeklyData[year].push(Math.round(interpolated + variation));
+                    }
+                }
+            }
+            
+            return weeklyData;
+        }
+
+        // Real Estate, Gold, S&P 500 data (monthly, we'll keep these as is)
+        const realEstateData = {
+            '2019': [100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111],
+            '2020': [112, 113, 114, 115, 117, 119, 121, 123, 125, 127, 129, 131],
+            '2021': [133, 136, 139, 142, 145, 148, 151, 154, 157, 160, 163, 166],
+            '2022': [168, 170, 172, 173, 174, 175, 176, 177, 178, 179, 180, 180],
+            '2023': [181, 182, 183, 184, 185, 186, 188, 190, 192, 194, 196, 198],
+            '2024': [200, 202, 205, 208, 211, 214, 217, 220, 223, 226, 229, 232]
+        };
+
+        const goldData = {
+            '2019': [1100, 1150, 1200, 1180, 1220, 1280, 1300, 1350, 1400, 1380, 1350, 1370],
+            '2020': [1420, 1480, 1450, 1520, 1560, 1600, 1700, 1800, 1750, 1780, 1720, 1690],
+            '2021': [1650, 1600, 1610, 1630, 1700, 1720, 1680, 1650, 1620, 1650, 1700, 1680],
+            '2022': [1700, 1750, 1800, 1820, 1780, 1750, 1630, 1600, 1550, 1530, 1600, 1620],
+            '2023': [1680, 1720, 1780, 1850, 1900, 1850, 1800, 1820, 1780, 1850, 1900, 1950],
+            '2024': [1900, 1950, 2000, 2050, 2100, 2150, 2100, 2050, 2100, 2200, 2300, 2400]
+        };
+
+        const sp500Data = {
+            '2019': [2500, 2700, 2800, 2900, 2750, 2900, 3000, 2900, 3000, 3050, 3100, 3200],
+            '2020': [3250, 3350, 2500, 2700, 3000, 3100, 3200, 3400, 3350, 3450, 3600, 3700],
+            '2021': [3750, 3850, 3950, 4100, 4200, 4300, 4350, 4500, 4300, 4550, 4600, 4750],
+            '2022': [4500, 4350, 4500, 4100, 4000, 3800, 3900, 4100, 3600, 3850, 4000, 3850],
+            '2023': [4000, 4100, 4150, 4200, 4300, 4450, 4500, 4550, 4300, 4350, 4550, 4750],
+            '2024': [4850, 5000, 5250, 5200, 5300, 5500, 5600, 5400, 5700, 5850, 6000, 6100]
+        };
+
+        function calculateRealAssetDCA(monthlyAmount, years, assetData) {
+            const currentDate = new Date();
+            const startDate = new Date(currentDate);
+            startDate.setFullYear(startDate.getFullYear() - years);
+            
+            let totalInvested = 0;
+            let totalUnits = 0;
+            
+            let currentYear = startDate.getFullYear();
+            let currentMonth = startDate.getMonth();
+            
+            const endYear = currentDate.getFullYear();
+            const endMonth = currentDate.getMonth();
+            
+            while (currentYear < endYear || (currentYear === endYear && currentMonth <= endMonth)) {
+                const yearData = assetData[currentYear.toString()];
+                if (yearData && yearData[currentMonth]) {
+                    const assetPrice = yearData[currentMonth];
+                    const unitsBought = monthlyAmount / assetPrice;
+                    
+                    totalInvested += monthlyAmount;
+                    totalUnits += unitsBought;
+                }
+                
+                currentMonth++;
+                if (currentMonth > 11) {
+                    currentMonth = 0;
+                    currentYear++;
+                }
+            }
+            
+            const latestYear = Object.keys(assetData).sort().pop();
+            const latestMonthData = assetData[latestYear];
+            const currentPrice = latestMonthData[latestMonthData.length - 1];
+            
+            const finalValue = totalUnits * currentPrice;
+            return finalValue;
+        }
+
+        function calculateBitcoinWeeklyDCA(weeklyAmount, years) {
+            const currentDate = new Date();
+            const startDate = new Date(currentDate);
+            startDate.setFullYear(startDate.getFullYear() - years);
+            
+            let totalInvested = 0;
+            let totalBTC = 0;
+            const purchases = [];
+            const dates = [];
+            const prices = [];
+            const portfolioValues = [];
+            const cumulativeInvestments = []; // Track total money invested over time
+            
+            let currentYear = startDate.getFullYear();
+            let weekOfYear = Math.floor((startDate - new Date(currentYear, 0, 1)) / (7 * 24 * 60 * 60 * 1000));
+            
+            const endYear = currentDate.getFullYear();
+            const endWeek = Math.floor((currentDate - new Date(endYear, 0, 1)) / (7 * 24 * 60 * 60 * 1000));
+            
+            while (currentYear < endYear || (currentYear === endYear && weekOfYear <= endWeek)) {
+                const yearData = btcWeeklyData[currentYear.toString()];
+                if (yearData && yearData[weekOfYear]) {
+                    const btcPrice = yearData[weekOfYear];
+                    const btcBought = weeklyAmount / btcPrice;
+                    
+                    totalInvested += weeklyAmount;
+                    totalBTC += btcBought;
+                    
+                    const weekDate = new Date(currentYear, 0, 1 + weekOfYear * 7);
+                    const dateStr = weekDate.toISOString().slice(0, 10);
+                    dates.push(dateStr);
+                    prices.push(btcPrice);
+                    purchases.push({ date: dateStr, price: btcPrice, amount: btcBought });
+                    portfolioValues.push(totalBTC * btcPrice);
+                    cumulativeInvestments.push(totalInvested); // Track cumulative investment
+                }
+                
+                weekOfYear++;
+                if (weekOfYear >= 48) {
+                    weekOfYear = 0;
+                    currentYear++;
+                }
+            }
+            
+            const latestYear = Object.keys(btcWeeklyData).sort().pop();
+            const latestData = btcWeeklyData[latestYear];
+            const currentBTCPrice = latestData[latestData.length - 1];
+            
+            const finalValue = totalBTC * currentBTCPrice;
+            const totalGain = finalValue - totalInvested;
+            const roi = ((finalValue - totalInvested) / totalInvested * 100).toFixed(1);
+            
+            return {
+                totalInvested,
+                finalValue,
+                totalGain,
+                roi,
+                totalBTC,
+                purchases,
+                dates,
+                prices,
+                portfolioValues,
+                cumulativeInvestments, // Return cumulative investments
+                currentBTCPrice
+            };
+        }
+
+        let currentVerticalLine = null;
+        
+        function renderBitcoinChart(dcaData) {
+            const svg = document.getElementById('btcChart');
+            const tooltip = document.getElementById('chart-tooltip');
+            const container = document.getElementById('chart-container');
+            svg.innerHTML = '';
+            
+            const width = 1000; // Fixed wide width for scrolling
+            const height = 350;
+            const padding = 50;
+            const chartWidth = width - padding * 2;
+            const chartHeight = height - padding * 2;
+            
+            const maxPrice = Math.max(...dcaData.prices);
+            const maxPortfolio = Math.max(...dcaData.portfolioValues, ...dcaData.cumulativeInvestments);
+            
+            const xScale = (index) => padding + (index / (dcaData.dates.length - 1)) * chartWidth;
+            const yScalePrice = (price) => padding + chartHeight - (price / maxPrice) * chartHeight;
+            const yScalePortfolio = (value) => padding + chartHeight - (value / maxPortfolio) * chartHeight;
+            
+            // Function to show tooltip with vertical line
+            function showTooltip(index, x, isMobile) {
+                const date = dcaData.dates[index];
+                const btcPrice = dcaData.prices[index];
+                const portfolioValue = dcaData.portfolioValues[index];
+                const invested = dcaData.cumulativeInvestments[index];
+                const profitLoss = portfolioValue - invested;
+                const profitLossPercent = ((profitLoss / invested) * 100).toFixed(1);
+                const profitLossColor = profitLoss >= 0 ? 'var(--success)' : 'var(--danger)';
+                const profitSign = profitLoss >= 0 ? '+' : '';
+                
+                const formattedDate = new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+                const symbol = getCurrencySymbol();
+                
+                tooltip.innerHTML = `
+                    <div style="font-weight: bold; margin-bottom: 5px;">${formattedDate}</div>
+                    <div style="color: #f97316;">BTC: ${symbol}${btcPrice.toLocaleString('nl-NL')}</div>
+                    <div style="color: #6366f1;">Invested: ${symbol}${Math.round(invested).toLocaleString('nl-NL')}</div>
+                    <div style="color: #8b5cf6;">Portfolio: ${symbol}${Math.round(portfolioValue).toLocaleString('nl-NL')}</div>
+                    <div style="color: ${profitLossColor}; font-weight: bold; margin-top: 3px;">P/L: ${profitSign}${symbol}${Math.round(profitLoss).toLocaleString('nl-NL')} (${profitSign}${profitLossPercent}%)</div>
+                `;
+                tooltip.style.display = 'block';
+                
+                // Remove old vertical line
+                if (currentVerticalLine) {
+                    currentVerticalLine.remove();
+                }
+                
+                // Add new vertical line
+                currentVerticalLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                currentVerticalLine.setAttribute('x1', x);
+                currentVerticalLine.setAttribute('y1', padding);
+                currentVerticalLine.setAttribute('x2', x);
+                currentVerticalLine.setAttribute('y2', height - padding);
+                currentVerticalLine.setAttribute('stroke', '#666');
+                currentVerticalLine.setAttribute('stroke-width', '2');
+                currentVerticalLine.setAttribute('stroke-dasharray', '5,5');
+                currentVerticalLine.setAttribute('opacity', '0.7');
+                svg.appendChild(currentVerticalLine);
+                
+                // Position tooltip - use fixed positioning for mobile
+                const containerRect = container.getBoundingClientRect();
+                const svgRect = svg.getBoundingClientRect();
+                
+                // Calculate relative position within container
+                const relativeX = x * (svgRect.width / width);
+                
+                // Position tooltip
+                let tooltipX = relativeX + 10;
+                let tooltipY = 10;
+                
+                // Keep tooltip in bounds
+                if (tooltipX + 150 > containerRect.width) {
+                    tooltipX = relativeX - 160;
+                }
+                
+                tooltip.style.left = tooltipX + 'px';
+                tooltip.style.top = tooltipY + 'px';
+            }
+            
+            function hideTooltip() {
+                tooltip.style.display = 'none';
+                if (currentVerticalLine) {
+                    currentVerticalLine.remove();
+                    currentVerticalLine = null;
+                }
+            }
+            
+            // Draw grid lines with Y-axis labels
+            for (let i = 0; i <= 4; i++) {
+                const y = padding + (i / 4) * chartHeight;
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', padding);
+                line.setAttribute('y1', y);
+                line.setAttribute('x2', width - padding);
+                line.setAttribute('y2', y);
+                line.setAttribute('stroke', '#e5e7eb');
+                line.setAttribute('stroke-width', '1');
+                svg.appendChild(line);
+                
+                // BTC price labels (left)
+                const priceValue = maxPrice * (1 - i / 4);
+                const priceLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                priceLabel.setAttribute('x', padding - 40);
+                priceLabel.setAttribute('y', y + 4);
+                priceLabel.setAttribute('font-size', '11');
+                priceLabel.setAttribute('fill', '#f97316');
+                priceLabel.setAttribute('font-weight', 'bold');
+                priceLabel.textContent = getCurrencySymbol() + Math.round(priceValue / 1000) + 'k';
+                svg.appendChild(priceLabel);
+                
+                // Portfolio labels (right)
+                const portfolioValue = maxPortfolio * (1 - i / 4);
+                const portfolioLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                portfolioLabel.setAttribute('x', width - padding + 5);
+                portfolioLabel.setAttribute('y', y + 4);
+                portfolioLabel.setAttribute('font-size', '11');
+                portfolioLabel.setAttribute('fill', 'var(--success)');
+                portfolioLabel.setAttribute('font-weight', 'bold');
+                portfolioLabel.textContent = getCurrencySymbol() + Math.round(portfolioValue / 1000) + 'k';
+                svg.appendChild(portfolioLabel);
+            }
+            
+            // Draw BTC price line
+            let pricePathData = `M ${xScale(0)} ${yScalePrice(dcaData.prices[0])}`;
+            for (let i = 1; i < dcaData.prices.length; i++) {
+                pricePathData += ` L ${xScale(i)} ${yScalePrice(dcaData.prices[i])}`;
+            }
+            
+            const pricePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            pricePath.setAttribute('d', pricePathData);
+            pricePath.setAttribute('stroke', '#f97316');
+            pricePath.setAttribute('stroke-width', '2');
+            pricePath.setAttribute('fill', 'none');
+            svg.appendChild(pricePath);
+            
+            // Draw cumulative investment line (blue dashed - baseline)
+            let investmentPathData = `M ${xScale(0)} ${yScalePortfolio(dcaData.cumulativeInvestments[0])}`;
+            for (let i = 1; i < dcaData.cumulativeInvestments.length; i++) {
+                investmentPathData += ` L ${xScale(i)} ${yScalePortfolio(dcaData.cumulativeInvestments[i])}`;
+            }
+            
+            const investmentPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            investmentPath.setAttribute('d', investmentPathData);
+            investmentPath.setAttribute('stroke', '#6366f1');
+            investmentPath.setAttribute('stroke-width', '2.5');
+            investmentPath.setAttribute('stroke-dasharray', '5,5');
+            investmentPath.setAttribute('fill', 'none');
+            svg.appendChild(investmentPath);
+            
+            // Draw portfolio line with color coding (green when profit, red when loss)
+            for (let i = 0; i < dcaData.portfolioValues.length - 1; i++) {
+                const isProfit = dcaData.portfolioValues[i] >= dcaData.cumulativeInvestments[i];
+                const color = isProfit ? '#10b981' : '#ef4444';
+                
+                const segment = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                segment.setAttribute('x1', xScale(i));
+                segment.setAttribute('y1', yScalePortfolio(dcaData.portfolioValues[i]));
+                segment.setAttribute('x2', xScale(i + 1));
+                segment.setAttribute('y2', yScalePortfolio(dcaData.portfolioValues[i + 1]));
+                segment.setAttribute('stroke', color);
+                segment.setAttribute('stroke-width', '3');
+                svg.appendChild(segment);
+            }
+            
+            // Create interactive overlay
+            const overlay = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            overlay.setAttribute('x', padding);
+            overlay.setAttribute('y', padding);
+            overlay.setAttribute('width', chartWidth);
+            overlay.setAttribute('height', chartHeight);
+            overlay.setAttribute('fill', 'transparent');
+            overlay.style.cursor = 'crosshair';
+            
+            // Handle both mouse and touch events
+            function handleInteraction(event) {
+                event.preventDefault();
+                
+                const svgRect = svg.getBoundingClientRect();
+                let clientX;
+                
+                if (event.type.startsWith('touch')) {
+                    clientX = event.touches[0].clientX;
+                } else {
+                    clientX = event.clientX;
+                }
+                
+                const x = ((clientX - svgRect.left) / svgRect.width) * width;
+                
+                if (x >= padding && x <= width - padding) {
+                    const relativeX = (x - padding) / chartWidth;
+                    const dataIndex = Math.round(relativeX * (dcaData.dates.length - 1));
+                    const actualX = xScale(dataIndex);
+                    
+                    const isMobile = event.type.startsWith('touch');
+                    showTooltip(dataIndex, actualX, isMobile);
+                }
+            }
+            
+            overlay.addEventListener('mousemove', handleInteraction);
+            overlay.addEventListener('mouseleave', hideTooltip);
+            
+            svg.appendChild(overlay);
+            
+            // Add drag-to-scroll functionality
+            let isDragging = false;
+            let startX = 0;
+            let scrollLeft = 0;
+            
+            container.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                startX = e.pageX - container.offsetLeft;
+                scrollLeft = container.scrollLeft;
+                container.style.cursor = 'grabbing';
+                e.preventDefault();
+            });
+            
+            container.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                e.preventDefault();
+                const x = e.pageX - container.offsetLeft;
+                const walk = (x - startX) * 2;
+                container.scrollLeft = scrollLeft - walk;
+            });
+            
+            container.addEventListener('mouseup', () => {
+                isDragging = false;
+                container.style.cursor = 'grab';
+            });
+            
+            container.addEventListener('mouseleave', () => {
+                isDragging = false;  
+                container.style.cursor = 'grab';
+            });
+            
+            // Touch drag for mobile
+            let touchStartX = 0;
+            let touchScrollLeft = 0;
+            let tapTimer = null;
+            
+            container.addEventListener('touchstart', (e) => {
+                touchStartX = e.touches[0].pageX;
+                touchScrollLeft = container.scrollLeft;
+                
+                // Long press shows tooltip
+                tapTimer = setTimeout(() => {
+                    const touch = e.touches[0];
+                    const svgRect = svg.getBoundingClientRect();
+                    const x = ((touch.clientX - svgRect.left) / svgRect.width) * width;
+                    
+                    if (x >= padding && x <= width - padding) {
+                        const relativeX = (x - padding) / chartWidth;
+                        const dataIndex = Math.round(relativeX * (dcaData.dates.length - 1));
+                        const actualX = xScale(dataIndex);
+                        showTooltip(dataIndex, actualX, true);
+                    }
+                }, 500);
+            }, {passive: true});
+            
+            container.addEventListener('touchmove', (e) => {
+                clearTimeout(tapTimer);
+                const touch = e.touches[0];
+                const walk = touchStartX - touch.pageX;
+                container.scrollLeft = touchScrollLeft + walk;
+            }, {passive: true});
+            
+            container.addEventListener('touchend', () => {
+                clearTimeout(tapTimer);
+            });
+            
+            container.style.cursor = 'grab';
+            
+            // Legend
+            const legendGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            
+            // BTC Price
+            const priceLegendLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            priceLegendLine.setAttribute('x1', padding);
+            priceLegendLine.setAttribute('y1', 20);
+            priceLegendLine.setAttribute('x2', padding + 25);
+            priceLegendLine.setAttribute('y2', 20);
+            priceLegendLine.setAttribute('stroke', '#f97316');
+            priceLegendLine.setAttribute('stroke-width', '3');
+            legendGroup.appendChild(priceLegendLine);
+            
+            const priceLegendText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            priceLegendText.setAttribute('x', padding + 30);
+            priceLegendText.setAttribute('y', 24);
+            priceLegendText.setAttribute('font-size', '11');
+            priceLegendText.setAttribute('fill', '#333');
+            priceLegendText.textContent = 'BTC Price';
+            legendGroup.appendChild(priceLegendText);
+            
+            // Investment (dashed blue)
+            const investmentLegendLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            investmentLegendLine.setAttribute('x1', padding + 95);
+            investmentLegendLine.setAttribute('y1', 20);
+            investmentLegendLine.setAttribute('x2', padding + 120);
+            investmentLegendLine.setAttribute('y2', 20);
+            investmentLegendLine.setAttribute('stroke', '#6366f1');
+            investmentLegendLine.setAttribute('stroke-width', '2.5');
+            investmentLegendLine.setAttribute('stroke-dasharray', '5,5');
+            legendGroup.appendChild(investmentLegendLine);
+            
+            const investmentLegendText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            investmentLegendText.setAttribute('x', padding + 125);
+            investmentLegendText.setAttribute('y', 24);
+            investmentLegendText.setAttribute('font-size', '11');
+            investmentLegendText.setAttribute('fill', '#333');
+            investmentLegendText.textContent = 'Invested';
+            legendGroup.appendChild(investmentLegendText);
+            
+            // Portfolio (green/red split)
+            const portfolioLegendLine1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            portfolioLegendLine1.setAttribute('x1', padding + 195);
+            portfolioLegendLine1.setAttribute('y1', 20);
+            portfolioLegendLine1.setAttribute('x2', padding + 207);
+            portfolioLegendLine1.setAttribute('y2', 20);
+            portfolioLegendLine1.setAttribute('stroke', 'var(--success)');
+            portfolioLegendLine1.setAttribute('stroke-width', '3');
+            legendGroup.appendChild(portfolioLegendLine1);
+            
+            const portfolioLegendLine2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            portfolioLegendLine2.setAttribute('x1', padding + 208);
+            portfolioLegendLine2.setAttribute('y1', 20);
+            portfolioLegendLine2.setAttribute('x2', padding + 220);
+            portfolioLegendLine2.setAttribute('y2', 20);
+            portfolioLegendLine2.setAttribute('stroke', 'var(--danger)');
+            portfolioLegendLine2.setAttribute('stroke-width', '3');
+            legendGroup.appendChild(portfolioLegendLine2);
+            
+            const portfolioLegendText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            portfolioLegendText.setAttribute('x', padding + 225);
+            portfolioLegendText.setAttribute('y', 24);
+            portfolioLegendText.setAttribute('font-size', '11');
+            portfolioLegendText.setAttribute('fill', '#333');
+            portfolioLegendText.textContent = 'Portfolio';
+            legendGroup.appendChild(portfolioLegendText);
+            
+            svg.appendChild(legendGroup);
+            
+            // Year labels
+            const startYear = new Date(dcaData.dates[0]).getFullYear();
+            const endYear = new Date(dcaData.dates[dcaData.dates.length - 1]).getFullYear();
+            
+            const startLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            startLabel.setAttribute('x', padding);
+            startLabel.setAttribute('y', height - 15);
+            startLabel.setAttribute('font-size', '12');
+            startLabel.setAttribute('fill', '#666');
+            startLabel.textContent = startYear;
+            svg.appendChild(startLabel);
+            
+            const endLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            endLabel.setAttribute('x', width - padding - 35);
+            endLabel.setAttribute('y', height - 15);
+            endLabel.setAttribute('font-size', '12');
+            endLabel.setAttribute('fill', '#666');
+            endLabel.textContent = endYear;
+            svg.appendChild(endLabel);
+            
+            // Hide tooltip when clicking outside
+            document.addEventListener('touchstart', function(e) {
+                if (!container.contains(e.target)) {
+                    hideTooltip();
+                }
+            });
+        }
+
+        function calculateInvestmentReturns(monthlyAmount, years, annualReturn) {
+            const months = years * 12;
+            const monthlyReturn = annualReturn / 12;
+            
+            let futureValue = 0;
+            for (let i = 0; i < months; i++) {
+                futureValue = (futureValue + monthlyAmount) * (1 + monthlyReturn);
+            }
+            
+            return futureValue;
+        }
+
+        function updateInvestmentCalculations() {
+            const years = parseFloat(document.getElementById('past-years').value);
+            const monthlyAmount = parseFloat(document.getElementById('past-monthly').value);
+            
+            if (!years || !monthlyAmount || years <= 0 || monthlyAmount <= 0) {
+                document.getElementById('investment-results').style.display = 'none';
+                return;
+            }
+
+            if (years > 6) {
+                alert('Maximum 6 years supported for accurate weekly data. Please enter 6 or less.');
+                document.getElementById('past-years').value = 6;
+                return;
+            }
+
+            document.getElementById('investment-results').style.display = 'block';
+
+            const totalWasted = monthlyAmount * years * 12;
+            const symbol = getCurrencySymbol();
+            document.getElementById('total-wasted').textContent = `${symbol}${totalWasted.toLocaleString('nl-NL', {minimumFractionDigits: 0, maximumFractionDigits: 0})}`;
+
+            const realEstate = calculateRealAssetDCA(monthlyAmount, years, realEstateData);
+            document.getElementById('real-estate-value').textContent = `${symbol}${realEstate.toLocaleString('nl-NL', {minimumFractionDigits: 0, maximumFractionDigits: 0})}`;
+
+            const gold = calculateRealAssetDCA(monthlyAmount, years, goldData);
+            document.getElementById('gold-value').textContent = `${symbol}${gold.toLocaleString('nl-NL', {minimumFractionDigits: 0, maximumFractionDigits: 0})}`;
+
+            const sp500 = calculateRealAssetDCA(monthlyAmount, years, sp500Data);
+            document.getElementById('sp500-value').textContent = `${symbol}${sp500.toLocaleString('nl-NL', {minimumFractionDigits: 0, maximumFractionDigits: 0})}`;
+
+            localStorage.setItem('past-years', years);
+            localStorage.setItem('past-monthly', monthlyAmount);
+            
+            // Bitcoin Weekly DCA
+            try {
+                const weeklyAmount = monthlyAmount / 4; // Convert monthly to weekly
+                const dcaData = calculateBitcoinWeeklyDCA(weeklyAmount, years);
+                
+                document.getElementById('bitcoin-value').textContent = `${symbol}${dcaData.finalValue.toLocaleString('nl-NL', {minimumFractionDigits: 0, maximumFractionDigits: 0})}`;
+                
+                document.getElementById('btc-total-invested').textContent = 
+                    symbol + dcaData.totalInvested.toLocaleString('nl-NL', {minimumFractionDigits: 0, maximumFractionDigits: 0});
+                
+                document.getElementById('btc-final-value').textContent = 
+                    symbol + dcaData.finalValue.toLocaleString('nl-NL', {minimumFractionDigits: 0, maximumFractionDigits: 0});
+                
+                document.getElementById('btc-total-gain').textContent = 
+                    symbol + dcaData.totalGain.toLocaleString('nl-NL', {minimumFractionDigits: 0, maximumFractionDigits: 0});
+                
+                document.getElementById('btc-roi').textContent = dcaData.roi + '%';
+                
+                document.getElementById('btc-chart-section').style.display = 'block';
+                renderBitcoinChart(dcaData);
+            } catch (error) {
+                console.error('Error rendering chart:', error);
+                document.getElementById('btc-chart-section').style.display = 'none';
+            }
+        }
+
+        function loadInvestmentData() {
+            const years = localStorage.getItem('past-years');
+            const monthly = localStorage.getItem('past-monthly');
+            
+            if (years) document.getElementById('past-years').value = years;
+            if (monthly) document.getElementById('past-monthly').value = monthly;
+            
+            if (years && monthly) {
+                updateInvestmentCalculations();
+            }
+        }
+
+        document.getElementById('past-years').addEventListener('input', updateInvestmentCalculations);
+        document.getElementById('past-monthly').addEventListener('input', updateInvestmentCalculations);
+
+        // Update currency symbols in labels
+        function updateCurrencyLabels() {
+            document.querySelectorAll('label').forEach(label => {
+                label.innerHTML = label.innerHTML.replace(/Monthly cost \([€$]\)/, 'Monthly cost (' + getCurrencySymbol() + ')');
+                label.innerHTML = label.innerHTML.replace(/Total monthly spending on bad habits \([€$]\)/, 'Total monthly spending on bad habits (' + getCurrencySymbol() + ')');
+            });
+        }
+        
+        // Initialize currency selector
+        initCurrency();
+        updateCurrencyLabels();
+        
+        // Load Lottie animations
+        if (typeof lottie !== 'undefined') {
+            // Wave animation in header
+            lottie.loadAnimation({
+                container: document.getElementById('wave-animation'),
+                renderer: 'svg',
+                loop: true,
+                autoplay: true,
+                path: 'https://lottie.host/d4428c1e-eabb-4ac5-baa5-49ee6f73633e/JIryaLNjkH.json'
+            });
+        }
+        
+        // Render custom habits
+        renderCustomHabits();
+        
+        loadInvestmentData();
+    </script>
+</body>
+</html>
